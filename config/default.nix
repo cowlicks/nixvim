@@ -14,6 +14,5 @@
           };
         };
       };
-  };
   extraConfigVim = builtins.readFile ./vimrc;
 }
