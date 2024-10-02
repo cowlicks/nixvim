@@ -91,7 +91,7 @@ map <leader>l :w \|:ClearScrollbackInLastTerminal <cr>
 map ,t :w \|:! tmux send-keys -t 0:$(tmux display-message -p '\#I').1 C-l C-u "\!\!" Enter Enter <cr><cr>
 
 " show line numbers
-set nu
+set number! relativenumber!
 
 " unlimited undo4eva
 set undodir=~/.vim/undodir_nixvim
