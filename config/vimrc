@@ -92,6 +92,8 @@ map ,t :w \|:! tmux send-keys -t 0:$(tmux display-message -p '\#I').1 C-l C-u "\
 
 " show line numbers
 set number! relativenumber!
+" disable numbered lines in terminal buffers
+autocmd TermOpen * setlocal nonumber norelativenumber
 
 " unlimited undo4eva
 set undodir=~/.vim/undodir_nixvim
