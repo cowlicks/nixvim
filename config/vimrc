@@ -80,9 +80,6 @@ map <leader>p :w \|:RerunLastThingInLastTerminal <cr>
 " run Ctrl-c command in most recently opened terminal buffer
 map <leader>c :w \|:CancelInLastTerminal <cr>
 
-" run Ctrl-c command in most recently opened terminal buffer
-map <leader>l :w \|:ClearScrollbackInLastTerminal <cr>
-
 " below is what we used before vim terminal
 " TODO find a way to user tmux pane instead of vim terminal automatically
 " send Ctrl-c to neighboring tmux pane
