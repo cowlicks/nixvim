@@ -20,5 +20,6 @@
       };
     };
   };
+  extraConfigLua = builtins.readFile ./vimrc.lua;
   extraConfigVim = builtins.readFile ./vimrc;
 }
