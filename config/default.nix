@@ -2,7 +2,10 @@
   # Import all your configuration modules here
   colorschemes.gruvbox.enable = true;
 
-  plugins.lsp = {
+  plugins = {
+  nix.enable = true;
+  lsp-format.enable = true;
+  lsp = {
     enable = true;
     servers = {
       rust-analyzer = {
@@ -19,6 +22,7 @@
         enable = true;
       };
     };
+  };
   };
   extraConfigLua = builtins.readFile ./vimrc.lua;
   extraConfigVim = builtins.readFile ./vimrc;
