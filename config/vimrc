@@ -88,7 +88,9 @@ map <leader>c :w \|:CancelInLastTerminal <cr>
 map ,t :w \|:! tmux send-keys -t 0:$(tmux display-message -p '\#I').1 C-l C-u "\!\!" Enter Enter <cr><cr>
 
 " show line numbers
-set number! relativenumber!
+set number!
+" I found relative line numbers annoying. "set relativenumber!
+"
 " disable numbered lines in terminal buffers
 autocmd TermOpen * setlocal nonumber norelativenumber
 
