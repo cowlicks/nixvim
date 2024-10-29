@@ -41,6 +41,21 @@
         };
       };
     };
+    telescope = {
+      enable = true;
+       extensions = {
+        live-grep-args.enable = true;
+      };
+      keymaps = {
+          "<C-p>" = {
+            action = "git_files";
+            options = {
+              desc = "Telescope Git Files";
+            };
+          };
+          "<leader>fg" = "live_grep";
+      };
+    };
   };
   extraConfigLua = builtins.readFile ./vimrc.lua;
   extraConfigVim = builtins.readFile ./vimrc;
