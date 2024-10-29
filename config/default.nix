@@ -18,22 +18,22 @@
     nix.enable = true;
     lsp-format.enable = true;
     lsp = {
-    keymaps = {
-        lspBuf = {
-          gr = "references";
-          gd = "definition";
-        };
+      keymaps = {
+          lspBuf = {
+            gr = "references";
+            gd = "definition";
+          };
       };
       enable = true;
       servers = {
-        rust-analyzer = {
+        rust_analyzer = {
           installCargo = true;
           installRustc = true;
           enable = true;
         };
         # should be ts-ls according to
         # https://nix-community.github.io/nixvim/plugins/lsp/servers/ts-ls/index.html
-        tsserver = {
+        ts_ls = {
           enable = true;
         };
         nixd = {
