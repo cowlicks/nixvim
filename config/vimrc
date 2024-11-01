@@ -31,8 +31,6 @@ autocmd Filetype sql set tabstop=2 shiftwidth=2 expandtab
 
 
 " rust stuff
-autocmd Filetype rust nnoremap ,ra :CocAction <cr>
-autocmd Filetype rust nnoremap ,o :CocCommand rust-analyzer.openDocs <cr>
 let g:rust_fold = 1
 
 " .yaml stuff
