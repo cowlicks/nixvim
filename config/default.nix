@@ -2,6 +2,9 @@
   # Import all your configuration modules here
   colorschemes.gruvbox.enable = true;
   plugins = {
+    rustaceanvim = {
+      enable = true;
+    };
     treesitter.enable = true;
     cmp = {
       enable = true;
@@ -38,11 +41,15 @@
       };
       enable = true;
       servers = {
-        rust_analyzer = {
-          installCargo = true;
-          installRustc = true;
+        clangd = {
           enable = true;
         };
+        # Removed in favor of rustaceanvim
+        #rust_analyzer = {
+        #  installCargo = true;
+        #  installRustc = true;
+        #  enable = true;
+        #};
         # should be ts-ls according to
         # https://nix-community.github.io/nixvim/plugins/lsp/servers/ts-ls/index.html
         ts_ls = {
