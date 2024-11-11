@@ -2,6 +2,7 @@
   # Import all your configuration modules here
   colorschemes.gruvbox.enable = true;
   plugins = {
+    web-devicons.enable = true;
     flash = {
       enable = true;
     };
