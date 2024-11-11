@@ -35,7 +35,14 @@
       };
     };
     nix.enable = true;
-    lsp-format.enable = true;
+    lsp-format = {
+      enable = true;
+      settings = {
+          javascript = {
+            exclude = [ "ts_ls" ];
+          };
+      };
+    };
     lsp = {
       keymaps = {
           lspBuf = {
