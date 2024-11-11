@@ -2,6 +2,9 @@
   # Import all your configuration modules here
   colorschemes.gruvbox.enable = true;
   plugins = {
+    trouble = {
+      enable = true;
+    };
     web-devicons.enable = true;
     flash = {
       enable = true;
@@ -89,4 +92,16 @@
   };
   extraConfigLua = builtins.readFile ./vimrc.lua;
   extraConfigVim = builtins.readFile ./vimrc;
+  keymaps = [
+    {
+      mode = "n";
+      key = "<leader>tt";
+      action = "<cmd>Trouble diagnostics toggle focus=true filter.buf=0<cr>";
+    }
+    {
+      mode = "n";
+      key = "<leader>te";
+      action = "<cmd>Trouble diagnostics toggle focus=true filter.buf=0 filter.severity=vim.diagnostic.severity.ERROR<cr>";
+    }
+  ];
 }
