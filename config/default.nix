@@ -2,6 +2,9 @@
   # Import all your configuration modules here
   colorschemes.gruvbox.enable = true;
   plugins = {
+    flash = {
+      enable = true;
+    };
     rustaceanvim = {
       enable = true;
     };
