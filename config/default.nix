@@ -78,6 +78,8 @@
       enable = true;
        extensions = {
         live-grep-args.enable = true;
+        ui-select.enable = true;
+        frecency.enable = true;
       };
       keymaps = {
           "<C-p>" = {
