@@ -113,9 +113,9 @@ vim.keymap.set('t', '<C-s>', '<C-\\><C-n><C-w>w', { noremap = true })
 --     "Third Line"
 -- })
 local current_float_win = nil
+local win_size_scaler = 0.5
 local function create_alert_window(message)
-    print(current_float_win)
-    -- only allow one window
+    -- Close existing floating window if it exists
     if current_float_win and vim.api.nvim_win_is_valid(current_float_win) then
         vim.api.nvim_win_close(current_float_win, true)
     end
@@ -127,8 +127,8 @@ local function create_alert_window(message)
     local height = vim.api.nvim_get_option("lines")
 
     -- Calculate window size
-    local win_height = math.ceil(height * 0.5)
-    local win_width = math.ceil(width * 0.5)
+    local win_height = math.ceil(height * win_size_scaler)
+    local win_width = math.ceil(width * win_size_scaler)
     local row = math.ceil((height - win_height) / 2)
     local col = math.ceil((width - win_width) / 2)
 
@@ -145,7 +145,7 @@ local function create_alert_window(message)
     }
 
     -- Set buffer lines with vertical centering
-    local pad_top = math.floor((win_height - #lines) / 2)
+    local pad_top = math.floor((win_height - #lines - 2) / 2)  -- -2 to account for footer
     local pad_lines = {}
     for _ = 1, pad_top do
         table.insert(pad_lines, "")
@@ -157,14 +157,33 @@ local function create_alert_window(message)
         table.insert(pad_lines, string.rep(" ", padding) .. line)
     end
 
+    -- Add padding until footer
+    local remaining_lines = win_height - #pad_lines - 2  -- -2 for footer and buffer
+    for _ = 1, remaining_lines do
+        table.insert(pad_lines, "")
+    end
+
+    -- Add footer
+    local footer = "Press 'n' or 'q' to exit"
+    local footer_padding = math.floor((win_width - vim.fn.strdisplaywidth(footer)) / 2)
+    table.insert(pad_lines, string.rep(" ", footer_padding) .. footer)
+
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, pad_lines)
 
     local win = vim.api.nvim_open_win(buf, true, opts)
+
+    -- Store the new window ID globally
     current_float_win = win
 
-    -- Set up close keybinding for this buffer
+    -- Set up close keybindings for this buffer
     vim.keymap.set('n', 'q', function()
         vim.api.nvim_win_close(win, true)
+        current_float_win = nil
+    end, { buffer = buf })
+
+    vim.keymap.set('n', 'n', function()
+        vim.api.nvim_win_close(win, true)
+        current_float_win = nil
     end, { buffer = buf })
 
     vim.api.nvim_win_set_option(win, 'winblend', 10)
@@ -173,6 +192,7 @@ local function create_alert_window(message)
     return buf, win
 end
 
+-- TODO rmme when i learn
 vim.keymap.set("n", "<C-w>w", function()
     create_alert_window("stop using <C-w>w. use <C-s> instead")
 end, { desc = "habit breaking is habit making" })
