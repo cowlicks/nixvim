@@ -89,3 +89,14 @@ end, { range = true })
 vim.keymap.set('v', '<leader>d', ':WrapConsoleLog<CR>', { noremap = true, silent = true })
 
 
+-- instead of having to do <C-w>w <C-w>w multiple times to change windows-
+-- just do <C-s>
+vim.keymap.set('n', '<C-s>', function()
+    vim.cmd('wincmd w')
+end, { noremap = true })
+
+-- make Ctrl-s work in terminal mode
+--vim.keymap.set('t', '<C-w><C-w>', '<C-\\><C-n><C-w><C-w>', { noremap = true })
+-- OR if you want to use just a single press of w while holding Ctrl
+vim.keymap.set('t', '<C-s>', '<C-\\><C-n><C-w>w', { noremap = true })
+
