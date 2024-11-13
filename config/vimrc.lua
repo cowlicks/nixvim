@@ -99,3 +99,83 @@ end, { noremap = true })
 --vim.keymap.set('t', '<C-w><C-w>', '<C-\\><C-n><C-w><C-w>', { noremap = true })
 -- OR if you want to use just a single press of w while holding Ctrl
 vim.keymap.set('t', '<C-s>', '<C-\\><C-n><C-w>w', { noremap = true })
+
+-- Open a window. Useful for helping break habits when learning new keybindings.
+--
+-- Example usage:
+-- Single line:
+-- create_alert_window("Hello World!")
+--
+-- Multiple lines:
+-- create_alert_window({
+--     "First Line",
+--     "Second Line",
+--     "Third Line"
+-- })
+local current_float_win = nil
+local function create_alert_window(message)
+    print(current_float_win)
+    -- only allow one window
+    if current_float_win and vim.api.nvim_win_is_valid(current_float_win) then
+        vim.api.nvim_win_close(current_float_win, true)
+    end
+
+    -- Convert message to table if it's a string
+    local lines = type(message) == "string" and {message} or message
+
+    local width = vim.api.nvim_get_option("columns")
+    local height = vim.api.nvim_get_option("lines")
+
+    -- Calculate window size
+    local win_height = math.ceil(height * 0.5)
+    local win_width = math.ceil(width * 0.5)
+    local row = math.ceil((height - win_height) / 2)
+    local col = math.ceil((width - win_width) / 2)
+
+    local buf = vim.api.nvim_create_buf(false, true)
+
+    local opts = {
+        style = "minimal",
+        relative = "editor",
+        width = win_width,
+        height = win_height,
+        row = row,
+        col = col,
+        border = "rounded"
+    }
+
+    -- Set buffer lines with vertical centering
+    local pad_top = math.floor((win_height - #lines) / 2)
+    local pad_lines = {}
+    for _ = 1, pad_top do
+        table.insert(pad_lines, "")
+    end
+
+    -- Center each line horizontally
+    for _, line in ipairs(lines) do
+        local padding = math.floor((win_width - vim.fn.strdisplaywidth(line)) / 2)
+        table.insert(pad_lines, string.rep(" ", padding) .. line)
+    end
+
+    vim.api.nvim_buf_set_lines(buf, 0, -1, false, pad_lines)
+
+    local win = vim.api.nvim_open_win(buf, true, opts)
+    current_float_win = win
+
+    -- Set up close keybinding for this buffer
+    vim.keymap.set('n', 'q', function()
+        vim.api.nvim_win_close(win, true)
+    end, { buffer = buf })
+
+    vim.api.nvim_win_set_option(win, 'winblend', 10)
+    vim.api.nvim_win_set_option(win, 'cursorline', true)
+
+    return buf, win
+end
+
+vim.keymap.set("n", "<C-w>w", function()
+    create_alert_window("stop using <C-w>w. use <C-s> instead")
+end, { desc = "habit breaking is habit making" })
+vim.keymap.set("n", "<C-w><C-w>", function()
+    create_alert_window("stop using <C-w>w. use <C-s> instead")
+end, { desc = "habit breaking is habit making" })
