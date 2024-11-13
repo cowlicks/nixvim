@@ -53,10 +53,10 @@ local function wrap_with_console_log()
   local end_line = vim.fn.line("'>")
   local start_col = vim.fn.col("'<")
   local end_col = vim.fn.col("'>")
-  
+
   -- Get the selected text
   local lines = vim.api.nvim_buf_get_lines(0, start_line - 1, end_line, false)
-  
+
   -- Handle multi-line selections
   if #lines > 1 then
     -- Adjust first and last lines for partial selections
@@ -66,16 +66,16 @@ local function wrap_with_console_log()
     -- Handle single line selection
     lines[1] = string.sub(lines[1], start_col, end_col)
   end
-  
+
   local selected_text = table.concat(lines, '\n')
-  
+
   -- Get the indentation of the first line
   local indent = vim.fn.indent(start_line)
   local spaces = string.rep(' ', indent)
-  
+
   -- Create the debug line
   local debug_line = spaces .. 'console.log(" let ' .. selected_text .. ' = ", ' .. selected_text .. ', ";");'
-  
+
   -- Insert the debug line after the selection
   vim.api.nvim_buf_set_lines(0, end_line, end_line, false, {debug_line})
 end
@@ -99,4 +99,3 @@ end, { noremap = true })
 --vim.keymap.set('t', '<C-w><C-w>', '<C-\\><C-n><C-w><C-w>', { noremap = true })
 -- OR if you want to use just a single press of w while holding Ctrl
 vim.keymap.set('t', '<C-s>', '<C-\\><C-n><C-w>w', { noremap = true })
-
