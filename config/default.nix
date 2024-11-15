@@ -3,6 +3,9 @@
   colorschemes.gruvbox.enable = true;
   imports = [ ./bufferline.nix ];
   plugins = {
+    lspsaga = {
+      enable = true;
+    };
     trouble = {
       enable = true;
     };
