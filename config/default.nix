@@ -1,6 +1,7 @@
 {
   # Import all your configuration modules here
   colorschemes.gruvbox.enable = true;
+  imports = [ ./bufferline.nix ];
   plugins = {
     trouble = {
       enable = true;
