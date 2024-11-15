@@ -13,9 +13,6 @@ set backupdir=~/.vim/backups_nixvim
 filetype indent on
 filetype plugin on
 
-set tabstop=4 shiftwidth=4 expandtab
-set softtabstop=4
-
 " Remove ability to use arrow key. Habit breaking, habit making.
 noremap <Up> <NOP>
 noremap <Down> <NOP>
