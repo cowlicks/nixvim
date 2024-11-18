@@ -66,17 +66,7 @@ nnoremap <leader>q :bp<bar>sp<bar>bn<bar>bd<CR>
 
 " ,w to save
 map ,w :w <cr>
-" ,bd to close buffer
-map <leader>bd :bd<CR>
 
-" run `!!` command in most recently opened terminal buffer
-map <leader>p :w \|:RerunLastThingInLastTerminal <cr>
-
-" run Ctrl-c command in most recently opened terminal buffer
-map <leader>c :w \|:CancelInLastTerminal <cr>
-
-" below is what we used before vim terminal
-" TODO find a way to user tmux pane instead of vim terminal automatically
 " send Ctrl-c to neighboring tmux pane
 "map ,c :w \|:! tmux send-keys -t 0:$(tmux display-message -p '\#I').1 C-c <cr><cr>
 " run `!!` command in the neighboring tmux pane
