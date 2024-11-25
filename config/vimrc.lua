@@ -18,24 +18,6 @@ vim.keymap.set('n', '<leader>bd', function()
 end, { noremap = true })
 
 
--- This was causing <Tab> to split the pane
----- Make it so holding down 'ctrl', and pressing 'w' will cycle through windows for every press of 'w' after the first instead of every 2 presses.
----- Track the timestamp of last <C-w> press
---local last_w_press = 0
----- Time window for last press to count for cycle window
---local last_w_press_time_limit = 1000;
---vim.keymap.set('n', '<C-w>', function()
---    local now = vim.loop.now()
---    -- If pressed within 200ms, cycle windows
---    if now - last_w_press < last_w_press_time_limit then
---        vim.cmd('wincmd w')
---    else
---        -- Otherwise, act as normal <C-w>
---        vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<C-w>', true, false, true), 'n', false)
---    end
---    last_w_press = now
---end, { noremap = true })
-
 -- flash hotkey
 vim.keymap.set({ 'n', 'x', 'o' }, 's', function()
     require('flash').jump()
@@ -99,6 +81,77 @@ end, { noremap = true })
 --vim.keymap.set('t', '<C-w><C-w>', '<C-\\><C-n><C-w><C-w>', { noremap = true })
 -- OR if you want to use just a single press of w while holding Ctrl
 vim.keymap.set('t', '<C-s>', '<C-\\><C-n><C-w>w', { noremap = true })
+
+-- Terminal Rerun Plugin
+local M = {}
+
+-- Store the last terminal buffer job id
+M.last_terminal_chan_id = nil
+
+-- Function to record terminal job id when terminal is opened
+local function record_terminal_id()
+    local buf = vim.api.nvim_get_current_buf()
+    local chan_id = vim.b[buf].terminal_job_id
+    if chan_id then
+        M.last_terminal_chan_id = chan_id
+    end
+end
+
+-- Function to clear scrollback and screen
+local function clear_terminal()
+    -- Temporarily set scrollback to 1 to clear history
+    vim.o.scrollback = 1
+    vim.cmd('sleep 100m')
+    vim.o.scrollback = 10000
+
+    -- Send Ctrl-L to clear the screen
+    if M.last_terminal_chan_id then
+        vim.fn.chansend(M.last_terminal_chan_id, vim.api.nvim_replace_termcodes('<C-l>', true, true, true))
+    end
+end
+
+-- Function to rerun last command
+function M.rerun_last_command()
+    if not M.last_terminal_chan_id then
+        vim.notify("No terminal found", vim.log.levels.ERROR)
+        return
+    end
+
+    -- Clear terminal
+    clear_terminal()
+
+    -- Send commands to rerun last command
+    local keys = vim.api.nvim_replace_termcodes('<C-u>!!<CR><CR>', true, true, true)
+    vim.fn.chansend(M.last_terminal_chan_id, keys)
+end
+
+-- Function to send Ctrl-C to terminal
+function M.send_ctrl_c()
+    if not M.last_terminal_chan_id then
+        vim.notify("No terminal found", vim.log.levels.ERROR)
+        return
+    end
+
+    local keys = vim.api.nvim_replace_termcodes('<C-c><CR><CR>', true, true, true)
+    vim.fn.chansend(M.last_terminal_chan_id, keys)
+end
+
+-- Setup function
+function M.setup()
+    -- Create autocmd to record terminal job id
+    vim.api.nvim_create_autocmd("TermOpen", {
+        callback = record_terminal_id,
+    })
+
+    -- Create user commands
+    vim.api.nvim_create_user_command('RerunLastThingInLastTerminal', M.rerun_last_command, {})
+    vim.api.nvim_create_user_command('CancelInLastTerminal', M.send_ctrl_c, {})
+
+    -- Setup keymaps
+    vim.keymap.set('n', '<leader>p', ':w<CR>:RerunLastThingInLastTerminal<CR>', { silent = true })
+    vim.keymap.set('n', '<leader>c', ':w<CR>:CancelInLastTerminal<CR>', { silent = true })
+end
+M.setup()
 
 -- Open a window. Useful for helping break habits when learning new keybindings.
 --
