@@ -153,6 +153,12 @@ function M.setup()
 end
 M.setup()
 
+-- instead of having to do <C-w>w <C-w>w multiple times to change windows-
+-- just do <C-s>
+vim.keymap.set('n', '<C-s>', function()
+    vim.cmd('wincmd w')
+end, { noremap = true })
+
 -- Open a window. Useful for helping break habits when learning new keybindings.
 --
 -- Example usage:
