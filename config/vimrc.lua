@@ -251,73 +251,30 @@ local function create_alert_window(message)
     return buf, win
 end
 
--- Terminal Rerun Plugin
-local M = {}
+-- Function to help break habits by showing an alert when using deprecated key sequences
+-- @param keys: table of key sequences to break the habit of using
+-- @param message: string message to show when keys are pressed
+-- @param alternative: (optional) string suggesting the alternative key sequence
+local function break_habit(keys, message, alternative)
+    -- If alternative is provided, create a multi-line message array
+    local display_message = alternative
+        and {message, "Use " .. alternative .. " instead"}
+        or {message}
 
--- Store the last terminal buffer job id
-M.last_terminal_chan_id = nil
-
--- Function to record terminal job id when terminal is opened
-local function record_terminal_id()
-    local buf = vim.api.nvim_get_current_buf()
-    local chan_id = vim.b[buf].terminal_job_id
-    if chan_id then
-        M.last_terminal_chan_id = chan_id
+    -- For each key sequence, create a keymap
+    for _, key in ipairs(keys) do
+        -- Create the keymap for both normal and command mode
+        vim.keymap.set({"n", "c"}, key, function()
+            create_alert_window(display_message)
+        end, {
+            desc = "habit breaking is habit making",
+            silent = true
+        })
     end
 end
 
--- Function to clear scrollback and screen
-local function clear_terminal()
-    -- Temporarily set scrollback to 1 to clear history
-    vim.o.scrollback = 1
-    vim.cmd('sleep 100m')
-    vim.o.scrollback = 10000
-
-    -- Send Ctrl-L to clear the screen
-    if M.last_terminal_chan_id then
-        vim.fn.chansend(M.last_terminal_chan_id, vim.api.nvim_replace_termcodes('<C-l>', true, true, true))
-    end
-end
-
--- Function to rerun last command
-function M.rerun_last_command()
-    if not M.last_terminal_chan_id then
-        vim.notify("No terminal found", vim.log.levels.ERROR)
-        return
-    end
-
-    -- Clear terminal
-    clear_terminal()
-
-    -- Send commands to rerun last command
-    local keys = vim.api.nvim_replace_termcodes('<C-u>!!<CR><CR>', true, true, true)
-    vim.fn.chansend(M.last_terminal_chan_id, keys)
-end
-
--- Function to send Ctrl-C to terminal
-function M.send_ctrl_c()
-    if not M.last_terminal_chan_id then
-        vim.notify("No terminal found", vim.log.levels.ERROR)
-        return
-    end
-
-    local keys = vim.api.nvim_replace_termcodes('<C-c><CR><CR>', true, true, true)
-    vim.fn.chansend(M.last_terminal_chan_id, keys)
-end
-
--- Setup function
-function M.setup()
-    -- Create autocmd to record terminal job id
-    vim.api.nvim_create_autocmd("TermOpen", {
-        callback = record_terminal_id,
-    })
-
-    -- Create user commands
-    vim.api.nvim_create_user_command('RerunLastThingInLastTerminal', M.rerun_last_command, {})
-    vim.api.nvim_create_user_command('CancelInLastTerminal', M.send_ctrl_c, {})
-
-    -- Setup keymaps
-    vim.keymap.set('n', '<leader>p', ':w<CR>:RerunLastThingInLastTerminal<CR>', { silent = true })
-    vim.keymap.set('n', '<leader>c', ':w<CR>:CancelInLastTerminal<CR>', { silent = true })
-end
-M.setup()
+break_habit(
+    { "<C-w>w", "<C-w><C-w>" },
+    "Stop using <C-w>w & <C-w><C-w>",
+    "<C-s>"
+)
