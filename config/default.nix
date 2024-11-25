@@ -1,6 +1,10 @@
 {
   # Import all your configuration modules here
-  colorschemes.gruvbox.enable = true;
+  colorschemes = {
+    gruvbox.enable = true;
+    # adding more colorschemes causes conflicts
+    #ayu.enable = true;
+  };
   imports = [ ./bufferline.nix ];
   plugins = {
     lspsaga = {
@@ -53,7 +57,6 @@
     lsp = {
       keymaps = {
           lspBuf = {
-            gr = "references";
             gd = "definition";
           };
       };
@@ -93,6 +96,7 @@
             };
           };
           "<leader>fg" = "live_grep";
+          "gr" = "lsp_references";
       };
     };
   };
