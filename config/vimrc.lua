@@ -89,26 +89,34 @@ local M = {}
 M.last_terminal_chan_id = nil
 
 -- Function to record terminal job id when terminal is opened
-local function record_terminal_id()
+local function record_terminal_id(ev)
     local buf = vim.api.nvim_get_current_buf()
     local chan_id = vim.b[buf].terminal_job_id
+    M.last_terminal_bufnr = ev.buf
     if chan_id then
         M.last_terminal_chan_id = chan_id
     end
 end
 
 -- Function to clear scrollback and screen
-local function clear_terminal()
+function M.clear_terminal()
     -- Temporarily set scrollback to 1 to clear history
-    vim.o.scrollback = 1
-    vim.cmd('sleep 100m')
-    vim.o.scrollback = 10000
+    if M.last_terminal_bufnr then
+        vim.bo[M.last_terminal_bufnr].scrollback = 1
+        vim.cmd('sleep 100m')
+        vim.bo[M.last_terminal_bufnr].scrollback = 1000
+    else
+        vim.bo.scrollback = 1
+        vim.cmd('sleep 100m')
+        vim.bo.scrollback = 10000
+    end
 
     -- Send Ctrl-L to clear the screen
     if M.last_terminal_chan_id then
         vim.fn.chansend(M.last_terminal_chan_id, vim.api.nvim_replace_termcodes('<C-l>', true, true, true))
     end
 end
+
 
 -- Function to rerun last command
 function M.rerun_last_command()
@@ -118,7 +126,7 @@ function M.rerun_last_command()
     end
 
     -- Clear terminal
-    clear_terminal()
+    M.clear_terminal()
 
     -- Send commands to rerun last command
     local keys = vim.api.nvim_replace_termcodes('<C-u>!!<CR><CR>', true, true, true)
@@ -144,6 +152,7 @@ function M.setup()
     })
 
     -- Create user commands
+    vim.api.nvim_create_user_command('ClearTerminalScrollback', M.clear_terminal, {})
     vim.api.nvim_create_user_command('RerunLastThingInLastTerminal', M.rerun_last_command, {})
     vim.api.nvim_create_user_command('CancelInLastTerminal', M.send_ctrl_c, {})
 
