@@ -104,11 +104,11 @@ function M.clear_terminal()
     if M.last_terminal_bufnr then
         vim.bo[M.last_terminal_bufnr].scrollback = 1
         vim.cmd('sleep 100m')
-        vim.bo[M.last_terminal_bufnr].scrollback = 1000
+        vim.bo[M.last_terminal_bufnr].scrollback = 100000
     else
         vim.bo.scrollback = 1
         vim.cmd('sleep 100m')
-        vim.bo.scrollback = 10000
+        vim.bo.scrollback = 100000
     end
 
     -- Send Ctrl-L to clear the screen
