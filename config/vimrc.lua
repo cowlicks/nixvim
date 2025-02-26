@@ -287,3 +287,6 @@ break_habit(
     "Stop using <C-w>w & <C-w><C-w>",
     "<C-s>"
 )
+
+-- Toggle hardtime
+vim.keymap.set('n', '<leader>ht', '<cmd>Hardtime toggle<CR>')
