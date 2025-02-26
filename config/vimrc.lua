@@ -288,5 +288,16 @@ break_habit(
     "<C-s>"
 )
 
+-- JavaScript indentation settings
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = "javascript",
+    callback = function()
+        vim.bo.tabstop = 4
+        vim.bo.shiftwidth = 4
+        vim.bo.expandtab = true
+        vim.bo.softtabstop = 4
+    end
+})
+
 -- Toggle hardtime
 vim.keymap.set('n', '<leader>ht', '<cmd>Hardtime toggle<CR>')
